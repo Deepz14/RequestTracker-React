@@ -40,20 +40,39 @@ export const Request = () => {
         }
     }
 
-    const addRequestHandler = async(e) => {
+    const addRequestHandler = async() => {
+        const payload = {...requestData, requestCreated: new Date().toISOString(), requestUpdated: new Date().toISOString()};
+       
+        const response = await fetch("https://localhost:7213/api/Request", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    const updateRequestHandler = async() => {
+        const payload = {...requestData, requestId: reqId, requestUpdated: new Date().toISOString()};
+        
+        const response = await fetch(`https://localhost:7213/api/Request/${reqId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        return data;
+    }
+
+    const formSubmitHandler = async(e) => {
         try {
             e.preventDefault();
             setIsLoading(true);
-            const payload = {...requestData, requestCreated: new Date().toISOString(), requestUpdated: new Date().toISOString()};
-            console.log("Payload data: ", payload);
-            const response = await fetch("https://localhost:7213/api/Request", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
+            currentFormState === 'Add' ? await addRequestHandler() : await updateRequestHandler();
             setIsLoading(false);
             navigate("/");
         } catch (error) {
@@ -63,20 +82,27 @@ export const Request = () => {
     }
 
     useEffect(() => {
-        console.log("Request component path name", pathname);
         if (pathname.includes('edit')) {
             setCurrentFormState('Edit');
             getRequest();
         } else {
             setCurrentFormState('Add');
+            setRequestData({
+                requestTitle: "",
+                requestDescription: "",
+                requestStatus: "Pending",
+                requestPriority: "Low",
+                requestCreated: "",
+                requestUpdated: ""
+            });
         }
-    }, []);
+    }, [reqId]);
 
     return ( isLoading ? <LoaderScreen /> : (
         <div className="reqComp-wrapper">
             <div className="reqcard-wrapper">
                 <h2 className="text-center">{currentFormState === 'Add' ? 'Add Request' : 'Edit Request'}</h2>
-                <form onSubmit={addRequestHandler} className="request-form-container">
+                <form onSubmit={formSubmitHandler} className="request-form-container">
                     <div className="form-group">
                         <label htmlFor="request-title">Title</label>
                         <input type="text" name="requestTitle" className="form-control" value={requestData?.requestTitle} onChange={handleChange}

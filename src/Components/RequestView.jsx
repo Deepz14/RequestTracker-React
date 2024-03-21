@@ -17,6 +17,17 @@ export const RequestView = () => {
         }
     }
 
+    const deleteRequest = async() => {
+        try{
+            const response = await fetch(`https://localhost:7213/api/Request/${reqId}`, {
+                method: "DELETE"
+            });
+            navigate('/');
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         getRequest();
     }, []);
@@ -30,7 +41,7 @@ export const RequestView = () => {
                         <h3>{requestData ? requestData?.requestTitle : ''}</h3>
                         <div className='reqView-item-header-options'>
                             <button onClick={() => navigate(`/request/edit/${reqId}`)} className='btn btn-primary'>Edit</button>
-                            <button className='btn btn-danger'>Delete</button>
+                            <button onClick={deleteRequest} className='btn btn-danger'>Delete</button>
                         </div>
                     </div>
 
