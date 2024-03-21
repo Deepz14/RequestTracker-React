@@ -4,6 +4,10 @@
     justify-content: space-between;
     padding: 5px 10px;
     box-shadow: 1px 1px 1px rgba(77, 77, 79, 0.2);
+    position: fixed;
+    top: 0;
+    background-color: #fff;
+    z-index: 2;
 }
 
 .logo-container{
@@ -26,7 +30,8 @@
 }
 
 .main-container{
-    margin: 10px;
+    margin: 30px 10px 10px 10px;
+    padding-top: 20px;
 }
 
 .text-center{
